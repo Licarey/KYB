@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/mLLRoot">
+    <FrameLayout
+        android:id="@+id/mFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="54.5dp"
+        android:background="@color/color_1f97fc"
+        android:gravity="center_vertical">
+        <RadioGroup
+            android:id="@+id/mRadioGroup"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RadioButton
+                android:drawableTop="@drawable/home"
+                android:button="@null"
+                android:checked="true"
+                android:id="@+id/mRb_home"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:text="首页"
+                android:paddingTop="5dp"
+                android:drawablePadding="3dp"
+                android:textColor="#FFFFFF"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+            <RadioButton
+                android:drawableTop="@drawable/dollarcoins"
+                android:button="@null"
+                android:checked="false"
+                android:id="@+id/mRb_price"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:text="价格"
+                android:paddingTop="5dp"
+                android:textColor="#FFFFFF"
+                android:drawablePadding="3dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+            <RadioButton
+                android:drawableTop="@drawable/satellite"
+                android:button="@null"
+                android:checked="false"
+                android:id="@+id/mRb_news"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:text="快讯"
+                android:textColor="#FFFFFF"
+                android:paddingTop="5dp"
+                android:drawablePadding="3dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+            <RadioButton
+                android:drawableTop="@drawable/graphchart"
+                android:button="@null"
+                android:checked="false"
+                android:id="@+id/mRb_zhishu"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:text="指数"
+                android:textColor="#FFFFFF"
+                android:paddingTop="5dp"
+                android:drawablePadding="3dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+            <RadioButton
+                android:drawableTop="@drawable/boxclosed2"
+                android:button="@null"
+                android:checked="false"
+                android:id="@+id/mRb_store"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:text="库存"
+                android:textColor="#FFFFFF"
+                android:paddingTop="5dp"
+                android:drawablePadding="3dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+        </RadioGroup>
+    </LinearLayout>
+
+</LinearLayout>

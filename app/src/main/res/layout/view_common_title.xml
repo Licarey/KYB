@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/color_1f97fc"
+        tools:context="kuangyibao.com.kuangyibao.LancherActivity">
+
+        <LinearLayout
+            android:id="@+id/mIvBack"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:background="@mipmap/back" />
+            </LinearLayout>
+
+        <TextView
+            android:id="@+id/mTvBackText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+            android:layout_toRightOf="@id/mIvBack"
+            android:layout_marginLeft="8dp"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/mTvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:text="标题"
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
+            android:maxEms="10"
+            android:ellipsize="end"
+            android:maxLines="1"/>
+        <TextView
+            android:id="@+id/mTvNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:text="标题"
+            android:layout_marginRight="15dp"
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
+            android:visibility="invisible"/>
+
+    </RelativeLayout>
+</merge>

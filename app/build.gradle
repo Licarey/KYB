@@ -1,0 +1,75 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.2"
+    useLibrary 'org.apache.http.legacy'
+    signingConfigs {
+        debug {
+            storeFile file('/Users/apple/projects/KuangYiBao/app/key/kuangyibao_keystore.jks')
+            keyAlias 'key_kuangyibao'
+            storePassword 'Kuangyibao123!@#'
+            keyPassword 'Kuangyibao123!@#'
+        }
+        release {
+            storeFile file('/Users/apple/projects/KuangYiBao/app/key/kuangyibao_keystore.jks')
+            keyAlias 'key_kuangyibao'
+            storePassword 'Kuangyibao123!@#'
+            keyPassword 'Kuangyibao123!@#'
+        }
+    }
+    defaultConfig {
+        applicationId "kuangyibao.com.kuangyibao"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        signingConfig signingConfigs.debug
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "PRINT_LOG", "false"
+            signingConfig signingConfigs.release
+        }
+        debug {
+            debuggable true
+            buildConfigField "boolean", "PRINT_LOG", "true"
+            signingConfig signingConfigs.debug
+        }
+    }
+
+
+    aaptOptions {
+        cruncherEnabled = false
+        useNewCruncher = false
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:support-v4:27.0.2'
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:recyclerview-v7:27.0.2'
+    compile 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.0'
+    compile 'com.android.support:support-annotations:26.0.0-alpha1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.zhy:okhttputils:2.6.2'
+    compile 'com.alibaba:fastjson:1.2.46'
+    compile 'com.andsync.xpermission:XPermissionUtils:1.3'
+    compile files('libs/libammsdk.jar')
+    compile files('libs/alipaySdk-20180403.jar')
+    compile 'org.greenrobot:eventbus:3.1.1'
+    compile files('libs/weiboSDKCore_3.1.4.jar')
+
+    compile 'com.umeng.sdk:common:latest.integration'
+    compile 'com.umeng.sdk:analytics:latest.integration'
+}
