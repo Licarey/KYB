@@ -1,14 +1,17 @@
 package kuangyibao.com.kuangyibao.view;
 
 import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsPromptResult;
@@ -25,19 +28,21 @@ import com.alibaba.fastjson.TypeReference;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
-import org.greenrobot.eventbus.EventBus;
+import java.util.ArrayList;
+import java.util.List;
 
+import kuangyibao.com.kuangyibao.R;
+import kuangyibao.com.kuangyibao.SubH5DetailActivity;
+import kuangyibao.com.kuangyibao.base.AppManager;
+import kuangyibao.com.kuangyibao.base.BaseApplication;
 import kuangyibao.com.kuangyibao.config.Urls;
 import kuangyibao.com.kuangyibao.entity.ADEntity;
 import kuangyibao.com.kuangyibao.entity.BaseEntity;
+import kuangyibao.com.kuangyibao.entity.CheckVerEntity;
 import kuangyibao.com.kuangyibao.eventMsg.GetTitleMessage;
 import kuangyibao.com.kuangyibao.eventMsg.HomeTitleMessage;
-import kuangyibao.com.kuangyibao.eventMsg.NewsTitleMessage;
-import kuangyibao.com.kuangyibao.eventMsg.PriceTitleMessage;
 import kuangyibao.com.kuangyibao.eventMsg.RefreshUrlMessage;
 import kuangyibao.com.kuangyibao.eventMsg.ShareMessage;
-import kuangyibao.com.kuangyibao.eventMsg.StoreTitleMessage;
-import kuangyibao.com.kuangyibao.eventMsg.ZhishuTitleMessage;
 import kuangyibao.com.kuangyibao.forums.ReleaseForumsActivity;
 import kuangyibao.com.kuangyibao.home.HomeActivity;
 import kuangyibao.com.kuangyibao.login.LoginActivity;
@@ -57,7 +62,7 @@ import okhttp3.Response;
  */
 
 public class CommonWebView extends WebView {
-    private boolean isLoadUrl = false;
+    private long duration = 1500;
     private Context mContext;
     private String urls;
 
@@ -101,34 +106,29 @@ public class CommonWebView extends WebView {
         if (TextUtils.isEmpty(urls)) {
             return;
         }
-        if (urls.contains("&uId=") && urls.contains("&token=")) {//替换uid
-            int startIndex = urls.indexOf("&token=");
-            int endIndex = urls.indexOf("&uId=");
-            String newUrl = urls.substring(startIndex + 7, endIndex);
-            String uidUrl = urls.substring(endIndex + 5);
-            String s = urls.replace(newUrl, MD5Utls.encrypt(SpUtils.getString(getContext(), "token", "")));
-            String news = s.replace(uidUrl, MD5Utls.encrypt(SpUtils.getString(getContext(), "uid", "")));
-            loadUrl(news);
-        }else if(urls.contains("&token=")){
-            int startIndex = urls.indexOf("&token=");
-            String newUrl = urls.substring(startIndex + 7);
-            String s = urls.replace(newUrl, MD5Utls.encrypt(SpUtils.getString(getContext(), "token", "")));
-            loadUrl(s);
-        }else{
-            loadUrl(urls);
+        if(!TextUtils.isEmpty(SpUtils.getString(getContext() , "uid" , ""))){//登陆过
+            if (urls.contains("&uId=") && urls.contains("&token=")) {//替换uid
+                int startIndex = urls.indexOf("&token=");
+                int endIndex = urls.indexOf("&uId=");
+                String newUrl = urls.substring(startIndex + 7, endIndex);
+                String uidUrl = urls.substring(endIndex + 5);
+                String s = urls.replace(newUrl, MD5Utls.encrypt(SpUtils.getString(getContext(), "token", "")));
+                String news = s.replace(uidUrl, MD5Utls.encrypt(SpUtils.getString(getContext(), "uid", "")));
+                loadUrl(news);
+            }else if(urls.contains("&token=")){
+                int startIndex = urls.indexOf("&token=");
+                String newUrl = urls.substring(startIndex + 7);
+                String s = urls.replace(newUrl, MD5Utls.encrypt(SpUtils.getString(getContext(), "token", "")))+ "&uId=" + MD5Utls.encrypt(SpUtils.getString(getContext(), "uid", ""));
+                loadUrl(s);
+            }else{
+                loadUrl(urls);
+            }
         }
-
     }
 
     private class MyWebViewClient extends WebViewClient {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if (!isLoadUrl) {
-                isLoadUrl = true;
-                urls = url;
-                view.loadUrl(url);
-                return;
-            }
             super.onPageStarted(view, url, favicon);
         }
 
@@ -141,6 +141,7 @@ public class CommonWebView extends WebView {
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
             super.onReceivedSslError(view, handler, error);
             refreshPage();
+            Log.e("LM" , "onReceivedSslError ");
         }
 
         @Override
@@ -150,26 +151,59 @@ public class CommonWebView extends WebView {
                 mContext.startActivity(intent);
                 return true;
             }
-            urls = url;
             if (url.contains("http:") || url.contains("https:")) {
+                urls = url;
                 view.loadUrl(url);
-                switch (HomeActivity.getCURRENTINDEX()) {
+                switch (HomeActivity.CURRENTINDEX){
                     case 0:
-                        MessageHelper.sendMessage(new HomeTitleMessage(true, ""));
+                        if(url.contains("indexPrice.shtml")){
+                            MessageHelper.sendMessage(new HomeTitleMessage());
+                        }
                         break;
                     case 1:
-                        MessageHelper.sendMessage(new PriceTitleMessage(true, ""));
                         break;
                     case 2:
-                        MessageHelper.sendMessage(new NewsTitleMessage(true, ""));
+                        if(url.contains("indexSupply.shtml")
+                                || url.contains("wapIndexNews.shtml")
+                                || url.contains("indexBuy.shtml")){
+                            return true;
+                        }
+                        SubH5DetailActivity.actionStart(mContext , url);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(!TextUtils.isEmpty(urls))
+                                    goBack();
+                            }
+                        } , duration);
                         break;
                     case 3:
-                        MessageHelper.sendMessage(new ZhishuTitleMessage(true, ""));
+                        SubH5DetailActivity.actionStart(mContext , url);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(!TextUtils.isEmpty(urls))
+                                    goBack();
+                            }
+                        } , duration);
                         break;
                     case 4:
-                        MessageHelper.sendMessage(new StoreTitleMessage(true, ""));
+                        if(url.contains("stock_map.shtml")
+                                || url.contains("stock_trend.shtml")
+                                || url.contains("wapIndexStock.shtml")){
+                            return true;
+                        }
+                        SubH5DetailActivity.actionStart(mContext , url);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(!TextUtils.isEmpty(urls))
+                                    goBack();
+                            }
+                        } , duration);
                         break;
                 }
+                Log.e("LM" , "当前url " + url);
                 return true;
             }
             view.loadUrl(url);
@@ -183,7 +217,7 @@ public class CommonWebView extends WebView {
             super.onReceivedTitle(view, title);
             if (view.canGoBack()){
                 if(!TextUtils.isEmpty(title) && (!title.contains("无法") || !title.startsWith("http")))
-                    MessageHelper.sendMessage(new GetTitleMessage(title, HomeActivity.getCURRENTINDEX() + ""));
+                    MessageHelper.sendMessage(new GetTitleMessage(title));
             }
         }
 
@@ -276,7 +310,51 @@ public class CommonWebView extends WebView {
         }
         @JavascriptInterface
         public void callVer() {//版本更新
+            OkHttpUtils.getInstance()
+                    .post()
+                    .url(Urls.POST_CHECKVER_URL)
+                    .addHeader("appId" , Utils.getDeviceUniqID(mContext))
+                    .addHeader("token" , SpUtils.getString(mContext , "token" , ""))
+                    .addParams("ver" , SpUtils.getString(mContext , "ver" , ""))
+                    .build()
+                    .execute(new Callback<CheckVerEntity>() {
+                        @Override
+                        public CheckVerEntity parseNetworkResponse(Response response, int i) throws Exception {
+                            String string = response.body().string();
+                            CheckVerEntity adEntity = JSON.parseObject(string, new TypeReference<CheckVerEntity>() {});
+                            return adEntity;
+                        }
 
+                        @Override
+                        public void onError(Call call, Exception e, int i) {
+
+                        }
+
+                        @Override
+                        public void onResponse(CheckVerEntity o, int i) {
+                            if(o != null && o.getMessageId().equals("1")){
+                                if(Utils.getVersionCode(mContext) == o.getVer()){
+                                    Toast.makeText(mContext , "已是最新版本" , 0).show();
+                                }else{
+                                    new CustomDialog(mContext, R.style.Dialog, "有新版本，是否升级？", new CustomDialog.OnCloseListener() {
+                                        @Override
+                                        public void onClick(Dialog dialog, boolean confirm) {
+                                            if(confirm){
+                                                //下载apk
+                                                Uri uri = Uri.parse(Urls.BASEURL + "/app/kyb.apk");
+                                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                                mContext.startActivity(intent);
+                                            }
+                                        }
+
+                                    })
+                                            .setTitle("提示").show();
+                                }
+                            }else{
+                                Toast.makeText(mContext , "" + o.getMessageCont() , 0).show();
+                            }
+                        }
+                    });
         }
     }
 
@@ -285,10 +363,12 @@ public class CommonWebView extends WebView {
         refreshPage();
     }
 
+    private Dialog dialog = null;
     /**
      * 登出
      */
     private void loginOut() {
+        dialog = LoadingDialog.createLoadingDialog(BaseApplication.getInstance(), "正在加载...");
         OkHttpUtils.getInstance()
                 .post()
                 .url(Urls.POST_LOGINOUT_URL)
@@ -352,9 +432,15 @@ public class CommonWebView extends WebView {
                     @Override
                     public void onResponse(ADEntity o, int i) {
                         if(o != null && o.getMessageId().equals("1")){
+                            LoadingDialog.closeDialog(dialog);
                             SpUtils.putString(mContext , "token" , o.getToken());
+                            SpUtils.putString(mContext , "uid" , "");//uid清空
                             Toast.makeText(mContext , "退出成功" , 0).show();
                             MessageHelper.sendMessage(new RefreshUrlMessage());
+                        } else if("-21".equals(o.getMessageId()) || "-20".equals(o.getMessageId())){
+                            SpUtils.putString(mContext , "token" , "");
+                            Toast.makeText(mContext , o.getMessageCont() + "" , 0).show();
+                            AppManager.getInstance().finishAllActivity();
                         }
                     }
                 });

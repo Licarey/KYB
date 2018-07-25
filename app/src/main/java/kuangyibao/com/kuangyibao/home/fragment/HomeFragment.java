@@ -55,20 +55,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     protected void setUpView() {
         MessageHelper.regist(this);
         webView = findViewById(R.id.mWV);
-        ((TextView)findViewById(R.id.mTvTitles)).setText("首页");
         findViewById(R.id.mIvMessage).setOnClickListener(this);
         findViewById(R.id.mIvMine).setOnClickListener(this);
-        findViewById(R.id.mIvBack).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(webView.canGoBack()){
-                    webView.goBack();
-                    if(!webView.canGoBack()){
-                        findViewById(R.id.rl_normal).setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -135,26 +123,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                         }
                     }
                 });
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(HomeTitleMessage event){
-        if(event.isShowBack()){
-            findViewById(R.id.rl_normal).setVisibility(View.GONE);
-        }else{
-            findViewById(R.id.rl_normal).setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(GetTitleMessage event){
-        switch (Integer.valueOf(event.getIndex())){
-            case 0:
-                if(!TextUtils.isEmpty(event.getTitle())){
-                    ((TextView)findViewById(R.id.mTvTitles)).setText(event.getTitle());
-                }
-                break;
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

@@ -20,6 +20,7 @@ import okhttp3.OkHttpClient;
 public class BaseApplication extends Application {
     private Class currentClass;
     private static BaseApplication application;
+    private String versionName = "1.0";
 
     @Override
     public void onCreate() {
@@ -50,5 +51,13 @@ public class BaseApplication extends Application {
 
     public void setCurrentClass(Class currentClass) {
         this.currentClass = currentClass;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionCode) {
+        this.versionName = versionCode;
     }
 }

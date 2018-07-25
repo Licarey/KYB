@@ -179,7 +179,7 @@ public class Utils {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        return "";
+        return "1.0";
     }
 
     /**
@@ -193,7 +193,7 @@ public class Utils {
             return pi.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
-            return 0;
+            return 1;
         }
     }
 

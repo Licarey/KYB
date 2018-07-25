@@ -1,6 +1,8 @@
 package kuangyibao.com.kuangyibao.mine;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,8 +14,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
+import kuangyibao.com.kuangyibao.GuessPriceActivity;
 import kuangyibao.com.kuangyibao.LancherActivity;
 import kuangyibao.com.kuangyibao.R;
+import kuangyibao.com.kuangyibao.base.AppManager;
 import kuangyibao.com.kuangyibao.base.BaseActivity;
 import kuangyibao.com.kuangyibao.config.Urls;
 import kuangyibao.com.kuangyibao.entity.ADEntity;
@@ -21,12 +25,15 @@ import kuangyibao.com.kuangyibao.entity.BaseEntity;
 import kuangyibao.com.kuangyibao.entity.SignEntity;
 import kuangyibao.com.kuangyibao.entity.UserInfoEntity;
 import kuangyibao.com.kuangyibao.eventMsg.RefreshUrlMessage;
+import kuangyibao.com.kuangyibao.home.HomeActivity;
 import kuangyibao.com.kuangyibao.pay.PaySubscribeActivity;
 import kuangyibao.com.kuangyibao.util.ImageUtils;
 import kuangyibao.com.kuangyibao.util.MessageHelper;
 import kuangyibao.com.kuangyibao.util.SpUtils;
 import kuangyibao.com.kuangyibao.util.Utils;
+import kuangyibao.com.kuangyibao.view.CustomDialog;
 import kuangyibao.com.kuangyibao.view.ImageViewPlus;
+import kuangyibao.com.kuangyibao.view.LoadingDialog;
 import okhttp3.Call;
 import okhttp3.Response;
 
@@ -35,7 +42,7 @@ import okhttp3.Response;
  */
 public class MineActivity extends BaseActivity implements View.OnClickListener {
     private ImageViewPlus mIvHead;
-    private TextView mJifen , mSign , mEtLoginName , mEtLoginSex;
+    private TextView mJifen , mSign , mEtLoginName , mEtLoginSex , mName;
     private String currentTime = System.currentTimeMillis() + "";
 
     @Override
@@ -48,6 +55,7 @@ public class MineActivity extends BaseActivity implements View.OnClickListener {
         super.initView();
         mIvHead = findViewById(R.id.mIvHead);
         mEtLoginName = findViewById(R.id.mEtLoginName);
+        mName = findViewById(R.id.mName);
         mEtLoginSex = findViewById(R.id.mEtLoginSex);
         mJifen = findViewById(R.id.mTvJifen);//积分
         findViewById(R.id.mTvLogout).setOnClickListener(this);
@@ -112,6 +120,7 @@ public class MineActivity extends BaseActivity implements View.OnClickListener {
                             if(!TextUtils.isEmpty(o.getImgUrl()))
                                 ImageUtils.loadImageView(MineActivity.this , Urls.BASEURL + o.getImgUrl() , mIvHead);
                             mEtLoginName.setText(o.getuNName() + "");
+                            mName.setText(o.getuNName() + "");
                             mEtLoginSex.setText(o.getuSex().equals("1") ? "男" : "女");
                         }else{
                             Toast.makeText(MineActivity.this , "" + o.getMessageCont() , 0).show();
@@ -127,7 +136,15 @@ public class MineActivity extends BaseActivity implements View.OnClickListener {
                 if(!Utils.isConnected(this)){
                     Toast.makeText(this , "网络异常，请检查网络" , 0).show();
                 }else {
-                    loginOut();
+                    new CustomDialog(this, R.style.Dialog, "确定登出？", new CustomDialog.OnCloseListener() {
+                        @Override
+                        public void onClick(Dialog dialog, boolean confirm) {
+                            if(confirm){
+                                loginOut();
+                            }
+                        }
+
+                    }).setTitle("提示").setPositiveButton("登出").show();
                 }
                 break;
             case R.id.mLLUpdate://个人信息修改
@@ -250,10 +267,12 @@ public class MineActivity extends BaseActivity implements View.OnClickListener {
                 });
     }
 
+    private Dialog dialog = null;
     /**
      * 登出
      */
     private void loginOut() {
+        dialog = LoadingDialog.createLoadingDialog(this , "正在加载...");
         OkHttpUtils.getInstance()
                 .post()
                 .url(Urls.POST_LOGINOUT_URL)
@@ -279,6 +298,11 @@ public class MineActivity extends BaseActivity implements View.OnClickListener {
                     public void onResponse(BaseEntity o, int i) {
                         if(o != null && o.getMessageId().equals("1")){
                             getAD();
+                        } else if("-21".equals(o.getMessageId()) || "-20".equals(o.getMessageId())){
+                            SpUtils.putString(MineActivity.this , "token" , "");
+                            SpUtils.putString(MineActivity.this , "uid" , "");//uid清空
+                            Toast.makeText(MineActivity.this , o.getMessageCont() + "" , 0).show();
+                            AppManager.getInstance().finishAllActivity();
                         }else{
                             Toast.makeText(MineActivity.this , "" + o.getMessageCont() , 0).show();
                         }
@@ -316,6 +340,8 @@ public class MineActivity extends BaseActivity implements View.OnClickListener {
                     @Override
                     public void onResponse(ADEntity o, int i) {
                         if(o != null && o.getMessageId().equals("1")){
+                            LoadingDialog.closeDialog(dialog);
+                            SpUtils.putString(MineActivity.this , "uid" , "");//uid清空
                             SpUtils.putString(MineActivity.this , "token" , o.getToken());
                             Toast.makeText(MineActivity.this , "退出成功" , 0).show();
                             MessageHelper.sendMessage(new RefreshUrlMessage());

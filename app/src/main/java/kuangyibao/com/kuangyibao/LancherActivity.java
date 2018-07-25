@@ -26,11 +26,14 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
 
+import java.util.ArrayList;
+
+import kuangyibao.com.kuangyibao.base.AppManager;
+import kuangyibao.com.kuangyibao.base.BaseApplication;
 import kuangyibao.com.kuangyibao.config.Urls;
 import kuangyibao.com.kuangyibao.entity.ADEntity;
 import kuangyibao.com.kuangyibao.entity.IfGuessEntity;
 import kuangyibao.com.kuangyibao.home.HomeActivity;
-import kuangyibao.com.kuangyibao.login.UnLoginActivity;
 import kuangyibao.com.kuangyibao.service.PushTipService;
 import kuangyibao.com.kuangyibao.util.DialogUtil;
 import kuangyibao.com.kuangyibao.util.ImageUtils;
@@ -47,7 +50,7 @@ public class LancherActivity extends AppCompatActivity {
     private String currentTime = System.currentTimeMillis() + "";
     private String messageId = "";
     private String personNum = "0";
-    private int READ_PHONE_STATE = 0x12;
+    private int READ_PHONE_STATE = 133;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +71,11 @@ public class LancherActivity extends AppCompatActivity {
      * 获取手机imei权限
      */
     private void getReadPhoneState() {
-        XPermissionUtils.requestPermissions(this, READ_PHONE_STATE , new String[] { Manifest.permission.READ_PHONE_STATE },
+        XPermissionUtils.requestPermissions(this, READ_PHONE_STATE , new String[] { Manifest.permission.READ_PHONE_STATE},
                 new XPermissionUtils.OnPermissionListener() {
                     @Override
                     public void onPermissionGranted() {
+                        Log.e("LM" , "onPermissionGranted-----------");
                         getAD();
                         PushServiceUtils.startPollingService(LancherActivity.this,  30 , PushTipService.class, PushTipService.ACTION);
                         findViewById(R.id.mJump).setOnClickListener(new View.OnClickListener() {
@@ -94,6 +98,7 @@ public class LancherActivity extends AppCompatActivity {
 
                     @Override
                     public void onPermissionDenied(final String[] deniedPermissions, boolean alwaysDenied) {
+                        Log.e("LM" , "onPermissionDenied-----------");
                         Toast.makeText(LancherActivity.this, "获取手机访问权限失败", Toast.LENGTH_SHORT).show();
                         if (alwaysDenied) { // 拒绝后不再询问 -> 提示跳转到设置
                             DialogUtil.showPermissionManagerDialog(LancherActivity.this, "手机访问权限");
@@ -144,8 +149,10 @@ public class LancherActivity extends AppCompatActivity {
                     public void onResponse(IfGuessEntity o, int i) {
                         if(o != null){
                             messageId = o.getMessageId();
-                            personNum = o.getGuessNum();
-                            findViewById(R.id.mJump).setVisibility(View.VISIBLE);
+                            if(o.getMessageId().equals("1")){//成功才有值
+                                personNum = o.getGuessNum();
+                                findViewById(R.id.mJump).setVisibility(View.VISIBLE);
+                            }
                         }
                     }
                 });
@@ -189,7 +196,8 @@ public class LancherActivity extends AppCompatActivity {
                     public void onResponse(ADEntity o, int i) {
                         getUserStatus();
                         if(o != null && o.getMessageId().equals("1")){
-                            SpUtils.putString(LancherActivity.this , "ver" , o.getVer());
+                            BaseApplication.getInstance().setVersionName(o.getVer());//版本号
+                            Log.e("LM" , "服务器版本 " + o.getVer());
                             SpUtils.putString(LancherActivity.this , "token" , o.getToken());
                             SpUtils.putString(LancherActivity.this , "adver" , o.getAdvVer());
                             if(!TextUtils.isEmpty(o.getAppAdvImg())){
@@ -201,7 +209,13 @@ public class LancherActivity extends AppCompatActivity {
                                 ImageUtils.loadImageView(LancherActivity.this , SpUtils.getString(LancherActivity.this , "adimg" , ""), (ImageView) findViewById(R.id.bg));
                             }
                         }
-                        mHandler.postDelayed(runnable , 5000);
+                        if("-21".equals(o.getMessageId()) || "-20".equals(o.getMessageId())){
+                            SpUtils.putString(LancherActivity.this , "token" , "");
+                            Toast.makeText(LancherActivity.this , o.getMessageCont() + "" , 0).show();
+                            AppManager.getInstance().finishAllActivity();
+                        }else{
+                            mHandler.postDelayed(runnable , 5000);
+                        }
                     }
                 });
     }
@@ -224,5 +238,12 @@ public class LancherActivity extends AppCompatActivity {
     private String getSignture(){
         String s = currentTime + Utils.md5(Utils.getDeviceUniqID(this)).toUpperCase();
         return Utils.md5(s).toUpperCase();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        XPermissionUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

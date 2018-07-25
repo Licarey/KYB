@@ -71,6 +71,8 @@ public class ShareUtil {
         msg.title = title;
         msg.description = description;
         if (TextUtils.isEmpty(thumbUrl)) {
+            Bitmap thumb = BitmapFactory.decodeResource(mContexts.getResources(), R.mipmap.logo);
+            msg.setThumbImage(thumb);
             req.transaction = buildTransaction("webpage");
             req.message = msg;
             req.scene = isFriend ? SendMessageToWX.Req.WXSceneTimeline : SendMessageToWX.Req.WXSceneSession;
@@ -87,7 +89,7 @@ public class ShareUtil {
                         req.scene = isFriend ? SendMessageToWX.Req.WXSceneTimeline : SendMessageToWX.Req.WXSceneSession;
                         api.sendReq(req);
                     } else {
-                        Bitmap thumb = BitmapFactory.decodeResource(mContexts.getResources(), R.mipmap.ic_launcher);
+                        Bitmap thumb = BitmapFactory.decodeResource(mContexts.getResources(), R.mipmap.logo);
                         msg.thumbData = Util.bmpToByteArray(thumb, false);
                         req.transaction = buildTransaction("webpage");
                         req.message = msg;
@@ -98,7 +100,7 @@ public class ShareUtil {
 
                 @Override
                 public void onBitmapFailed(Drawable drawable) {
-                    Bitmap thumb = BitmapFactory.decodeResource(mContexts.getResources(), R.mipmap.ic_launcher);
+                    Bitmap thumb = BitmapFactory.decodeResource(mContexts.getResources(), R.mipmap.logo);
                     msg.thumbData = Util.bmpToByteArray(thumb, false);
                     req.transaction = buildTransaction("webpage");
                     req.message = msg;
@@ -126,7 +128,7 @@ public class ShareUtil {
         mediaObject.description = description;
         mediaObject.actionUrl = httpUrl;
         if (TextUtils.isEmpty(thumbUrl)) {
-            Bitmap thumb = BitmapFactory.decodeResource(mContexts.getResources(), R.mipmap.ic_launcher);
+            Bitmap thumb = BitmapFactory.decodeResource(mContexts.getResources(), R.mipmap.logo);
             mediaObject.setThumbImage(thumb);
             weiboMultiMessage1.mediaObject = mediaObject;
             SendMultiMessageToWeiboRequest request2 = new SendMultiMessageToWeiboRequest();

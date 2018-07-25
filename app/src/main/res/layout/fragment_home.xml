@@ -11,63 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <RelativeLayout
-            android:id="@+id/rl_back"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@color/color_1f97fc">
-
-            <LinearLayout
-                android:id="@+id/mIvBack"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical">
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="15dp"
-                    android:background="@mipmap/back" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/mTvBackText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="#FFFFFF"
-                android:textSize="18dp"
-                android:layout_toRightOf="@id/mIvBack"
-                android:layout_marginLeft="8dp"
-                android:layout_centerVertical="true"
-                android:maxEms="10"
-                android:ellipsize="end"
-                android:maxLines="1"/>
-
-            <TextView
-                android:id="@+id/mTvTitles"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:text="标题"
-                android:textColor="#FFFFFF"
-                android:textSize="20dp" />
-            <TextView
-                android:id="@+id/mTvNext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center"
-                android:text="标题"
-                android:layout_marginRight="15dp"
-                android:textColor="#FFFFFF"
-                android:textSize="20dp"
-                android:visibility="invisible"/>
-
-        </RelativeLayout>
-        <RelativeLayout
             android:id="@+id/rl_normal"
             android:layout_width="match_parent"
             android:layout_height="50dp"

@@ -40,6 +40,9 @@ public class SpUtils {
     }
 
     public static String getString(Context context, String key, String defaultValue) {
+        if("ver".equals(key)){
+            return Utils.getVersionName(context) + "";
+        }
         if (mSharedPreferences == null) {
             mSharedPreferences = context.getSharedPreferences(SHARE_PREFER_NAME, Context.MODE_PRIVATE);
         }

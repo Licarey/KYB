@@ -22,7 +22,7 @@ public class Urls {
     public static final String UMENG_APPKEY = "2064903752";
 
 
-    public static final String BASEURL = "http://223.223.195.142:5080/kybapi";//http://223.223.195.142:5080/kybapi/
+    public static final String BASEURL = "http://39.106.172.41";//http://223.223.195.142:5080/kybapi/
 
     //广告
     public static final String POST_AD_URL = BASEURL + "/api/ver.shtml";
@@ -74,6 +74,8 @@ public class Urls {
     public static final String POST_BBS_URL = BASEURL + "/api/postBbs.shtml";
     //微信下单
     public static final String POST_WXPREPAY_URL = BASEURL + "/api/wxPrePay.shtml";
+    //版本更新
+    public static final String POST_CHECKVER_URL = BASEURL + "/api/checkVer.shtml";
 
 
 

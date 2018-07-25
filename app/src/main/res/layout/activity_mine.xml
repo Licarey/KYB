@@ -91,11 +91,12 @@
 
 
         <TextView
+            android:id="@+id/mName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:background="#00000000"
-            android:text="矿易宝"
+            android:text=""
             android:textColor="#ffffff"
             android:textSize="18dp" />
     </LinearLayout>

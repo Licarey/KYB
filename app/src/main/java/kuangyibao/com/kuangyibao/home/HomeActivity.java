@@ -1,6 +1,8 @@
 package kuangyibao.com.kuangyibao.home;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
@@ -8,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioButton;
@@ -21,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kuangyibao.com.kuangyibao.R;
+import kuangyibao.com.kuangyibao.base.AppManager;
 import kuangyibao.com.kuangyibao.base.BaseApplication;
+import kuangyibao.com.kuangyibao.config.Urls;
 import kuangyibao.com.kuangyibao.eventMsg.HomeTitleMessage;
 import kuangyibao.com.kuangyibao.eventMsg.ShareMessage;
 import kuangyibao.com.kuangyibao.home.fragment.HomeFragment;
@@ -29,9 +34,12 @@ import kuangyibao.com.kuangyibao.home.fragment.NewsFragment;
 import kuangyibao.com.kuangyibao.home.fragment.PriceFragment;
 import kuangyibao.com.kuangyibao.home.fragment.StoreFragment;
 import kuangyibao.com.kuangyibao.home.fragment.ZhiShuFragment;
+import kuangyibao.com.kuangyibao.pay.wxpay.Util;
 import kuangyibao.com.kuangyibao.share.ShareUtil;
 import kuangyibao.com.kuangyibao.share.SinaShareActivity;
 import kuangyibao.com.kuangyibao.util.MessageHelper;
+import kuangyibao.com.kuangyibao.util.Utils;
+import kuangyibao.com.kuangyibao.view.CustomDialog;
 import kuangyibao.com.kuangyibao.view.SharePopupWindow;
 
 /**
@@ -50,6 +58,7 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        AppManager.getInstance().addActivity(this);
         MessageHelper.regist(this);
         initView();
         mRadioGroup.setOnCheckedChangeListener(this); 
@@ -66,6 +75,8 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
         transaction.commit();
     }
 
+
+
     private void initView() {
         mRadioGroup = (RadioGroup) findViewById(R.id.mRadioGroup);
         rb_Home= (RadioButton) findViewById(R.id.mRb_home);
@@ -75,6 +86,22 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
         rb_Store= (RadioButton) findViewById(R.id.mRb_store);
         rb_Home.setChecked(true);
         setHomeState();
+        Log.e("LM" , "服务器版本 "+ BaseApplication.getInstance().getVersionName() + "  当前版本  "+ Utils.getVersionCode(this));
+        if(Float.valueOf(BaseApplication.getInstance().getVersionName()) > Utils.getVersionCode(this)){//需要升级
+            new CustomDialog(this, R.style.Dialog, "有新版本，是否升级？", new CustomDialog.OnCloseListener() {
+                @Override
+                public void onClick(Dialog dialog, boolean confirm) {
+                    if(confirm){
+                        //下载apk
+                        Uri uri = Uri.parse(Urls.BASEURL + "/app/kyb.apk");
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        HomeActivity.this.startActivity(intent);
+                    }
+                }
+
+            })
+                    .setTitle("提示").show();
+        }
     }
 
     @Override
@@ -190,37 +217,14 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(final ShareMessage event){//分享
-        SharePopupWindow.showWindow(this, findViewById(R.id.mLLRoot), new SharePopupWindow.IShareOption() {
-            @Override
-            public void shareWechat() {
-                //Context context , String title, String description, final String thumbUrl, String httpUrl, final boolean isFriend
-                ShareUtil.getInstance(HomeActivity.this).wxSharePage(HomeActivity.this , event.getTitle() , event.getContent() , event.getImageUrl() , event.getUrl() , true);
-            }
-
-            @Override
-            public void shareFriend() {
-                ShareUtil.getInstance(HomeActivity.this).wxSharePage(HomeActivity.this , event.getTitle() , event.getContent() , event.getImageUrl() , event.getUrl() , false);
-            }
-
-            @Override
-            public void shareSina() {
-                //Context context , final IWeiboShareAPI mWeiboShareAPI, String title, String description, String thumbUrl, String httpUrl
-                Intent intent = new Intent(HomeActivity.this , SinaShareActivity.class);
-                intent.putExtra("shareTitle" , event.getTitle());
-                intent.putExtra("shareDesc" , event.getContent());
-                intent.putExtra("shareImage" , event.getImageUrl());
-                intent.putExtra("shareUrl" , event.getUrl());
-                BaseApplication.getInstance().setCurrentClass(HomeActivity.class);
-                startActivity(intent);
-            }
-        });
+    public void onMessageEvent(final HomeTitleMessage event){
+        rb_Price.setChecked(true);
     }
-
 
     @Override
     protected void onDestroy() {
         MessageHelper.unRegist(this);
         super.onDestroy();
+        AppManager.getInstance().removeActivity(this);
     }
 }

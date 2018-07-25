@@ -6,11 +6,9 @@ package kuangyibao.com.kuangyibao.eventMsg;
 
 public class GetTitleMessage {
     private String title;
-    private String index;
 
-    public GetTitleMessage(String title , String index) {
+    public GetTitleMessage(String title) {
         this.title = title;
-        this.index = index;
     }
 
     public String getTitle() {
@@ -21,11 +19,4 @@ public class GetTitleMessage {
         this.title = title;
     }
 
-    public String getIndex() {
-        return index;
-    }
-
-    public void setIndex(String index) {
-        this.index = index;
-    }
 }

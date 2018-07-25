@@ -49,11 +49,7 @@ public class MyHtmlActivity extends BaseActivity {
         findViewById(R.id.mIvBack).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(webView.canGoBack()){
-                    webView.goBack();
-                }else{
-                    finish();
-                }
+                finish();
             }
         });
     }

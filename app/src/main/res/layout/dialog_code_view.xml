@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" android:gravity="center"
+    android:id="@+id/rootLayout">
+
+    <ImageView
+        android:id="@+id/img_qrcode"
+        android:layout_width="129dp"
+        android:layout_height="129dp"
+        android:contentDescription="二维码"
+        android:src="@drawable/gongzhonghao"/>
+
+</LinearLayout>

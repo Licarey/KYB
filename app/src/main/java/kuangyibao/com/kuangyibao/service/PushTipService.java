@@ -56,7 +56,7 @@ public class PushTipService extends Service {
     }
 
     //弹出Notification
-    private void showNotification(TipEntity tipEntity) {
+    private void showNotification(TipEntity.StatusBean tipEntity) {
 
         mNotification = new Notification.Builder(this)
                 .setContentTitle(tipEntity.getStatusTitle())
@@ -107,7 +107,9 @@ public class PushTipService extends Service {
                     @Override
                     public void onResponse(TipEntity o, int i) {
                         if(o != null && o.getMessageId().equals("1")){
-                            showNotification(o);
+                            if(o.getStatusList() != null && o.getStatusList().size() > 0){
+                                showNotification(o.getStatusList().get(0));
+                            }
                         }
                     }
                 });

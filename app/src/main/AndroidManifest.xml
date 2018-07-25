@@ -136,6 +136,9 @@
             android:name=".mine.UpdatePwdActivity"
             android:screenOrientation="portrait"></activity>
         <activity
+            android:name=".SubH5DetailActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
             android:name=".mine.ScoreActivity"
             android:screenOrientation="portrait"></activity>
         <activity

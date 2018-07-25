@@ -1,5 +1,7 @@
 package kuangyibao.com.kuangyibao.entity;
 
+import java.util.List;
+
 /**通知实体类
  * Created by apple on 18-4-3.
  *
@@ -15,10 +17,7 @@ package kuangyibao.com.kuangyibao.entity;
 public class TipEntity extends BaseEntity {
     private String messageCont;
     private String statusVer;
-    private String statusTitle;
-    private String statusHref;
-    private String statusType;
-    private String statusCont;
+    private List<StatusBean> statusList;
 
 
     @Override
@@ -39,35 +38,50 @@ public class TipEntity extends BaseEntity {
         this.statusVer = statusVer;
     }
 
-    public String getStatusTitle() {
-        return statusTitle;
+    public List<StatusBean> getStatusList() {
+        return statusList;
     }
 
-    public void setStatusTitle(String statusTitle) {
-        this.statusTitle = statusTitle;
+    public void setStatusList(List<StatusBean> statusList) {
+        this.statusList = statusList;
     }
 
-    public String getStatusHref() {
-        return statusHref;
-    }
+    public static class StatusBean {
+        private String statusTitle;
+        private String statusHref;
+        private String statusType;
+        private String statusCont;
 
-    public void setStatusHref(String statusHref) {
-        this.statusHref = statusHref;
-    }
+        public String getStatusTitle() {
+            return statusTitle;
+        }
 
-    public String getStatusType() {
-        return statusType;
-    }
+        public void setStatusTitle(String statusTitle) {
+            this.statusTitle = statusTitle;
+        }
 
-    public void setStatusType(String statusType) {
-        this.statusType = statusType;
-    }
+        public String getStatusHref() {
+            return statusHref;
+        }
 
-    public String getStatusCont() {
-        return statusCont;
-    }
+        public void setStatusHref(String statusHref) {
+            this.statusHref = statusHref;
+        }
 
-    public void setStatusCont(String statusCont) {
-        this.statusCont = statusCont;
+        public String getStatusType() {
+            return statusType;
+        }
+
+        public void setStatusType(String statusType) {
+            this.statusType = statusType;
+        }
+
+        public String getStatusCont() {
+            return statusCont;
+        }
+
+        public void setStatusCont(String statusCont) {
+            this.statusCont = statusCont;
+        }
     }
 }

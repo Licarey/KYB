@@ -125,9 +125,10 @@ public class RegistInfoActivity extends BaseActivity implements View.OnClickList
                             if(o.getMessageId().equals("1")){//成功
                                 SpUtils.putString(RegistInfoActivity.this , "uid" , o.getuId());
                                 Toast.makeText(RegistInfoActivity.this , "注册成功" , 0).show();
-                                AppManager.getInstance().finishActivity(RegistInfoActivity.class);
-                                AppManager.getInstance().finishActivity(RegistActivity.class);
-                                AppManager.getInstance().startActivity(RegistInfoActivity.this , LoginActivity.class);
+                                Intent intent = new Intent(RegistInfoActivity.this , LoginActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                finish();
                             }else{
                                 Toast.makeText(RegistInfoActivity.this , o.getMessageCont() , 0).show();
                             }

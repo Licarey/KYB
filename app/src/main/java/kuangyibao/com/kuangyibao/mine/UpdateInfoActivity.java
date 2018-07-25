@@ -116,11 +116,11 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                             mEtCompany.setText(o.getComName() + "");
                             mEtLoginName.setText(o.getuNName() + "");
                             if(o.getuSex().equals("1")){
-                                nan.setEnabled(false);
-                                nv.setEnabled(true);
+                                nan.setBackgroundResource(R.drawable.radio_selected);
+                                nv.setBackgroundResource(R.drawable.radio_normal);
                             }else{
-                                nv.setEnabled(false);
-                                nan.setEnabled(true);
+                                nv.setBackgroundResource(R.drawable.radio_selected);
+                                nan.setBackgroundResource(R.drawable.radio_normal);
                             }
                             if(!TextUtils.isEmpty(o.getImgUrl())){
                                 ImageUtils.loadImageView(UpdateInfoActivity.this , Urls.BASEURL + o.getImgUrl() , mHead);
@@ -136,13 +136,13 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.nan:
-                nan.setEnabled(false);
-                nv.setEnabled(true);
+                nan.setBackgroundResource(R.drawable.radio_selected);
+                nv.setBackgroundResource(R.drawable.radio_normal);
                 sex = "1";
                 break;
             case R.id.nv:
-                nan.setEnabled(true);
-                nv.setEnabled(false);
+                nv.setBackgroundResource(R.drawable.radio_selected);
+                nan.setBackgroundResource(R.drawable.radio_normal);
                 sex = "2";
                 break;
             case R.id.mTvPic:

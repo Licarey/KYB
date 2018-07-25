@@ -13,6 +13,7 @@ import kuangyibao.com.kuangyibao.config.Urls;
 import kuangyibao.com.kuangyibao.eventMsg.GetTitleMessage;
 import kuangyibao.com.kuangyibao.eventMsg.NewsTitleMessage;
 import kuangyibao.com.kuangyibao.eventMsg.PriceTitleMessage;
+import kuangyibao.com.kuangyibao.eventMsg.RefreshUrlMessage;
 import kuangyibao.com.kuangyibao.util.MD5Utls;
 import kuangyibao.com.kuangyibao.util.MessageHelper;
 import kuangyibao.com.kuangyibao.util.SpUtils;
@@ -39,18 +40,6 @@ public class PriceFragment extends BaseFragment {
         findViewById(R.id.mIvBack).setVisibility(View.INVISIBLE);
         ((TextView)findViewById(R.id.mTvTitle)).setText("价格");
 
-        findViewById(R.id.mIvBack).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(webView.canGoBack()){
-                    webView.goBack();
-                    if(!webView.canGoBack()){
-                        findViewById(R.id.mIvBack).setVisibility(View.INVISIBLE);
-                        ((TextView)findViewById(R.id.mTvTitle)).setText("价格");
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -65,23 +54,8 @@ public class PriceFragment extends BaseFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(PriceTitleMessage event){
-        if(event.isShowBack()){
-            findViewById(R.id.mIvBack).setVisibility(View.VISIBLE);
-        }else{
-            findViewById(R.id.mIvBack).setVisibility(View.INVISIBLE);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(GetTitleMessage event){
-        switch (Integer.valueOf(event.getIndex())){
-            case 1:
-                if(!TextUtils.isEmpty(event.getTitle())){
-                    ((TextView)findViewById(R.id.mTvTitle)).setText(event.getTitle());
-                }
-                break;
-        }
+    public void onMessageEvent(RefreshUrlMessage event){
+        webView.reload();
     }
 
     @Override

@@ -39,18 +39,6 @@ public class NewsFragment extends BaseFragment {
         webView = findViewById(R.id.mWV);
         findViewById(R.id.mIvBack).setVisibility(View.INVISIBLE);
         ((TextView)findViewById(R.id.mTvTitle)).setText("快讯");
-        findViewById(R.id.mIvBack).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(webView.canGoBack()){
-                    webView.goBack();
-                    if(!webView.canGoBack()){
-                        findViewById(R.id.mIvBack).setVisibility(View.INVISIBLE);
-                        ((TextView)findViewById(R.id.mTvTitle)).setText("快讯");
-                    }
-                }
-            }
-        });
     }
 
     @Override
@@ -62,26 +50,6 @@ public class NewsFragment extends BaseFragment {
             sb.append("&uId=").append(MD5Utls.encrypt(SpUtils.getString(getContext() , "uid" , "")));
         }
         webView.loadUrl(sb.toString());
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(NewsTitleMessage event){
-        if(event.isShowBack()){
-            findViewById(R.id.mIvBack).setVisibility(View.VISIBLE);
-        }else{
-            findViewById(R.id.mIvBack).setVisibility(View.INVISIBLE);
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(GetTitleMessage event){
-        switch (Integer.valueOf(event.getIndex())){
-            case 2:
-                if(!TextUtils.isEmpty(event.getTitle())){
-                    ((TextView)findViewById(R.id.mTvTitle)).setText(event.getTitle());
-                }
-                break;
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

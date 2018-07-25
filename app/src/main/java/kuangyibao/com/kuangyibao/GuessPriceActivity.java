@@ -14,6 +14,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
+import kuangyibao.com.kuangyibao.base.AppManager;
 import kuangyibao.com.kuangyibao.config.Urls;
 import kuangyibao.com.kuangyibao.entity.ADEntity;
 import kuangyibao.com.kuangyibao.entity.BaseEntity;
@@ -35,11 +36,11 @@ public class GuessPriceActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess_price);
-
+        AppManager.getInstance().addActivity(this);
         findViewById(R.id.mIvPrice_up).setOnClickListener(this);
         findViewById(R.id.mIvPrice_ping).setOnClickListener(this);
         findViewById(R.id.mIvPrice_down).setOnClickListener(this);
-        personNum = (TextView) findViewById(R.id.mTvNum);
+        personNum = findViewById(R.id.mTvNum);
 
         personNum.setText(getIntent().getStringExtra("personNum") + "");
     }
@@ -91,10 +92,20 @@ public class GuessPriceActivity extends AppCompatActivity implements View.OnClic
                         if(o != null && (o.getMessageId().equals("1") || o.getMessageId().equals("2"))){//或已猜过
                             startActivity(new Intent(GuessPriceActivity.this , HomeActivity.class));
                             finish();
+                        }else if("-21".equals(o.getMessageId()) || "-20".equals(o.getMessageId())){
+                            SpUtils.putString(GuessPriceActivity.this , "token" , "");
+                            Toast.makeText(GuessPriceActivity.this , o.getMessageCont() + "" , 0).show();
+                            AppManager.getInstance().finishAllActivity();
                         }else{
                             Toast.makeText(GuessPriceActivity.this , "" + o.getMessageCont() , 0).show();
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppManager.getInstance().removeActivity(this);
     }
 }
