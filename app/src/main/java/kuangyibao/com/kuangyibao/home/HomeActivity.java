@@ -12,10 +12,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.umeng.analytics.MobclickAgent;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -28,19 +29,14 @@ import kuangyibao.com.kuangyibao.base.AppManager;
 import kuangyibao.com.kuangyibao.base.BaseApplication;
 import kuangyibao.com.kuangyibao.config.Urls;
 import kuangyibao.com.kuangyibao.eventMsg.HomeTitleMessage;
-import kuangyibao.com.kuangyibao.eventMsg.ShareMessage;
 import kuangyibao.com.kuangyibao.home.fragment.HomeFragment;
 import kuangyibao.com.kuangyibao.home.fragment.NewsFragment;
 import kuangyibao.com.kuangyibao.home.fragment.PriceFragment;
 import kuangyibao.com.kuangyibao.home.fragment.StoreFragment;
 import kuangyibao.com.kuangyibao.home.fragment.ZhiShuFragment;
-import kuangyibao.com.kuangyibao.pay.wxpay.Util;
-import kuangyibao.com.kuangyibao.share.ShareUtil;
-import kuangyibao.com.kuangyibao.share.SinaShareActivity;
 import kuangyibao.com.kuangyibao.util.MessageHelper;
 import kuangyibao.com.kuangyibao.util.Utils;
 import kuangyibao.com.kuangyibao.view.CustomDialog;
-import kuangyibao.com.kuangyibao.view.SharePopupWindow;
 
 /**
  * 主页面
@@ -214,6 +210,18 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

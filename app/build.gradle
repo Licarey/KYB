@@ -6,13 +6,13 @@ android {
     useLibrary 'org.apache.http.legacy'
     signingConfigs {
         debug {
-            storeFile file('/Users/apple/projects/KuangYiBao/app/key/kuangyibao_keystore.jks')
+            storeFile file('./key/kuangyibao_keystore.jks')
             keyAlias 'key_kuangyibao'
             storePassword 'Kuangyibao123!@#'
             keyPassword 'Kuangyibao123!@#'
         }
         release {
-            storeFile file('/Users/apple/projects/KuangYiBao/app/key/kuangyibao_keystore.jks')
+            storeFile file('./key/kuangyibao_keystore.jks')
             keyAlias 'key_kuangyibao'
             storePassword 'Kuangyibao123!@#'
             keyPassword 'Kuangyibao123!@#'

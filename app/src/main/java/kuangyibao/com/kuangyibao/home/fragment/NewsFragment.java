@@ -1,10 +1,8 @@
 package kuangyibao.com.kuangyibao.home.fragment;
 
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -13,7 +11,6 @@ import kuangyibao.com.kuangyibao.R;
 import kuangyibao.com.kuangyibao.base.BaseFragment;
 import kuangyibao.com.kuangyibao.config.Urls;
 import kuangyibao.com.kuangyibao.eventMsg.GetTitleMessage;
-import kuangyibao.com.kuangyibao.eventMsg.NewsTitleMessage;
 import kuangyibao.com.kuangyibao.eventMsg.RefreshUrlMessage;
 import kuangyibao.com.kuangyibao.util.MD5Utls;
 import kuangyibao.com.kuangyibao.util.MessageHelper;
@@ -55,6 +52,11 @@ public class NewsFragment extends BaseFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(RefreshUrlMessage event){
         webView.reload();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(GetTitleMessage event){
+        ((TextView)findViewById(R.id.mTvTitle)).setText(event.getTitle());
     }
 
     @Override

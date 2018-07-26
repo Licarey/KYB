@@ -1,11 +1,10 @@
 package kuangyibao.com.kuangyibao;
 
-import android.*;
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.LauncherActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -26,8 +25,6 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.Callback;
 
 
-import java.util.ArrayList;
-
 import kuangyibao.com.kuangyibao.base.AppManager;
 import kuangyibao.com.kuangyibao.base.BaseApplication;
 import kuangyibao.com.kuangyibao.config.Urls;
@@ -39,6 +36,7 @@ import kuangyibao.com.kuangyibao.util.DialogUtil;
 import kuangyibao.com.kuangyibao.util.ImageUtils;
 import kuangyibao.com.kuangyibao.util.PushServiceUtils;
 import kuangyibao.com.kuangyibao.util.SpUtils;
+import kuangyibao.com.kuangyibao.util.TimeUtils;
 import kuangyibao.com.kuangyibao.util.Utils;
 import okhttp3.Call;
 import okhttp3.Response;
@@ -81,12 +79,12 @@ public class LancherActivity extends AppCompatActivity {
                         findViewById(R.id.mJump).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if (TextUtils.isEmpty(messageId) || !messageId.equals("2")) {
+                                if(TimeUtils.isSameDay(LancherActivity.this)){//同一天 证明已经猜过
+                                    startActivity(new Intent(LancherActivity.this, HomeActivity.class));
+                                }else{
                                     Intent intent = new Intent(LancherActivity.this, GuessPriceActivity.class);
                                     intent.putExtra("personNum", personNum);
                                     startActivity(intent);
-                                } else {
-                                    startActivity(new Intent(LancherActivity.this, HomeActivity.class));
                                 }
                                 OkHttpUtils.getInstance().cancelTag("100");
                                 OkHttpUtils.getInstance().cancelTag("101");
@@ -149,8 +147,8 @@ public class LancherActivity extends AppCompatActivity {
                     public void onResponse(IfGuessEntity o, int i) {
                         if(o != null){
                             messageId = o.getMessageId();
+                            personNum = o.getGuessNum();
                             if(o.getMessageId().equals("1")){//成功才有值
-                                personNum = o.getGuessNum();
                                 findViewById(R.id.mJump).setVisibility(View.VISIBLE);
                             }
                         }
@@ -223,7 +221,7 @@ public class LancherActivity extends AppCompatActivity {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if(messageId.equals("2")){//已猜过
+            if(TimeUtils.isSameDay(LancherActivity.this)){//已猜过
                 startActivity(new Intent(LancherActivity.this , HomeActivity.class));
             }else{
                 Intent intent = new Intent(LancherActivity.this , GuessPriceActivity.class);

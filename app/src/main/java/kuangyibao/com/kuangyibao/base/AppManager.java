@@ -11,7 +11,7 @@ import java.util.Stack;
  */
 
 public class AppManager {
-    private static Stack<Activity> activityStack;
+    private static Stack<Activity> activityStack = new Stack<>();
 
     public AppManager() {
     }
@@ -31,9 +31,6 @@ public class AppManager {
      * 添加Activity到堆栈
      */
     public void addActivity(Activity activity) {
-        if (activityStack == null) {
-            activityStack = new Stack<Activity>();
-        }
         activityStack.add(activity);
     }
 
@@ -116,10 +113,11 @@ public class AppManager {
      * 结束所有Activity
      */
     public void finishAllActivity() {
-        if (activityStack != null)
+        if (activityStack != null) {
             for (Activity activity : activityStack) {
                 activity.finish();
             }
-        activityStack.clear();
+            activityStack.clear();
+        }
     }
 }

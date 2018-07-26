@@ -1,5 +1,7 @@
 package kuangyibao.com.kuangyibao.util;
 
+import android.content.Context;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -45,6 +47,28 @@ public class TimeUtils {
         if((mHour == 11 && mMinuts == 30) || (mHour == 17 && mMinuts == 30)){
             return true;
 
+        }
+        return false;
+    }
+
+    /**
+     * 是否是同一天  用于猜价格
+     * @param context
+     * @return
+     */
+    public static boolean isSameDay(Context context){
+        if("".equals(SpUtils.getString(context , "guessTime" , ""))){
+            return false;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date current = new Date();
+        String time1 = simpleDateFormat.format(current);
+        long storeTime = Long.valueOf(SpUtils.getString(context , "guessTime" , ""));
+
+        Date d = new Date(storeTime);
+        String time2 = simpleDateFormat.format(d);
+        if(time1.equals(time2)){
+            return true;
         }
         return false;
     }

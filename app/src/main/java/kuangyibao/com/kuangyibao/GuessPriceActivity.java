@@ -2,10 +2,8 @@ package kuangyibao.com.kuangyibao;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,11 +14,8 @@ import com.zhy.http.okhttp.callback.Callback;
 
 import kuangyibao.com.kuangyibao.base.AppManager;
 import kuangyibao.com.kuangyibao.config.Urls;
-import kuangyibao.com.kuangyibao.entity.ADEntity;
 import kuangyibao.com.kuangyibao.entity.BaseEntity;
 import kuangyibao.com.kuangyibao.home.HomeActivity;
-import kuangyibao.com.kuangyibao.login.LoginActivity;
-import kuangyibao.com.kuangyibao.util.ImageUtils;
 import kuangyibao.com.kuangyibao.util.SpUtils;
 import kuangyibao.com.kuangyibao.util.Utils;
 import okhttp3.Call;
@@ -42,14 +37,18 @@ public class GuessPriceActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.mIvPrice_down).setOnClickListener(this);
         personNum = findViewById(R.id.mTvNum);
 
-        personNum.setText(getIntent().getStringExtra("personNum") + "");
+        if("0".equals(getIntent().getStringExtra("personNum") + "")){
+            personNum.setText("128");
+        }else{
+            personNum.setText(getIntent().getStringExtra("personNum") + "");
+        }
     }
 
 
     @Override
     public void onClick(View v) {
         if(!Utils.isConnected(this)){
-            Toast.makeText(this , "网络异常，请检查网络" , 0).show();
+            Toast.makeText(this , "网络异常，请检查网络" , Toast.LENGTH_SHORT).show();
             return;
         }
         switch (v.getId()){
@@ -66,6 +65,7 @@ public class GuessPriceActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void guessPrice(String change){
+        SpUtils.putString(this , "guessTime" , System.currentTimeMillis() + "");
         OkHttpUtils.getInstance()
                 .post()
                 .url(Urls.POST_GUESSPRICE_URL)
@@ -95,7 +95,7 @@ public class GuessPriceActivity extends AppCompatActivity implements View.OnClic
                         }else if("-21".equals(o.getMessageId()) || "-20".equals(o.getMessageId())){
                             SpUtils.putString(GuessPriceActivity.this , "token" , "");
                             Toast.makeText(GuessPriceActivity.this , o.getMessageCont() + "" , 0).show();
-                            AppManager.getInstance().finishAllActivity();
+                            //AppManager.getInstance().finishAllActivity();
                         }else{
                             Toast.makeText(GuessPriceActivity.this , "" + o.getMessageCont() , 0).show();
                         }
